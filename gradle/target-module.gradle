@@ -97,9 +97,14 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 // ---------------------------------------------------------------------------
-// Artifact naming: tradewindow-1.0.0-<minecraft version>.jar
+// Artifact naming: tradewindow-<minecraft version>.jar
+//
+// The mod version is deliberately *not* in the file name: one download per Minecraft
+// version is what people look for, and a reader who has six of these in a folder should
+// be able to tell which is which at a glance. The mod version still travels inside the
+// jar, in fabric.mod.json, where the game and the log can report it.
 // ---------------------------------------------------------------------------
-version = "${project.mod_version}-${target.mc}"
+version = target.mc
 base {
 	archivesName = 'tradewindow'
 }
