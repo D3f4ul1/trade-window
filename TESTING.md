@@ -66,6 +66,15 @@ new target is added, because all three are invisible to the compiler:
    commands, no right-click, no error. Test single-player as well as a dedicated server:
    the jar must work in both.
 
+**One end-to-end trade has now been run by hand (2026-09-24, 1.21.11).** Two
+unmodified clients on a live server: the token was crafted in a crafting table, the
+request was accepted from the chat buttons, the window opened with both offers in it,
+one side was locked, the other side was locked, the swap was delivered and the window
+closed - and every chat line in 0.3 to 0.6 above matched what appeared. The captures are
+in `docs/images/screenshot-*.png` (see the README). This is real evidence for **1.21.11
+only**, and it did not touch cancel, timeout, disconnect, death, a full inventory or
+`/tradeadmin`; those stay on the checklist below.
+
 ### 0.1 Server boots
 
 - [ ] Start the server. No `Item id not set` crash, no `ExceptionInInitializerError`,

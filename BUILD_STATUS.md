@@ -47,6 +47,20 @@ directions, and each side mishandles the other's spelling without an error:
 | object | `Not a string` — recipe dropped | **correct** |
 | escaped string | **correct** (parsed as JSON) | accepted, read **literally** |
 
+### End-to-end, on a real pair of clients (new)
+
+Beyond the boot tests, one **complete trade has now been played by hand** on a live
+1.21.11 server with two unmodified vanilla clients: token crafted in a crafting table,
+request accepted from the chat buttons, window open with both offers in it, one side
+locked, then the other, the swap delivered and the window closed - with the four chat
+lines matching `TESTING.md` 0.3-0.6 exactly. The captures of that run are in
+`docs/images/screenshot-*.png` and are used in the README.
+
+What that does **not** cover: it is 1.21.11 alone, and it did not exercise cancel,
+timeout, disconnect, death, a full inventory or any `/tradeadmin` command in a real game.
+Everything outside 1.21.11 remains checked by boot tests, unit tests and the packaging
+gate rather than by play.
+
 ### How it was measured, not assumed
 
 Every target was booted twice with a probe recipe: once with object components (to find

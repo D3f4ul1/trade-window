@@ -34,6 +34,54 @@ install **absolutely nothing**.
 
 ---
 
+## 🎮 In the game
+
+Every picture below is a real capture from a live **1.21.11** server with **two vanilla
+clients** — "vanilla" meaning neither of them has a client-side half of this mod, because
+there is none to install. What you are looking at is Minecraft itself drawing a chest
+and a chat line.
+
+<div align="center">
+
+<img src="docs/images/screenshot-request.png" alt="[Trade] PeacefulNull wants to trade. [ Accept ] [ Decline ]" width="82%">
+
+**The request.** One line in chat with two clickable buttons, and nothing has been spent
+yet — the token is charged only when the window actually opens.
+
+</div>
+
+<br>
+
+<div align="center">
+
+<img src="docs/images/screenshot-window.png" alt="The trade window as one player sees it" width="44%">
+<img src="docs/images/screenshot-mirrored.png" alt="The same trade as the other player sees it" width="44%">
+
+**The same trade, from each player's screen.** Identical chest, identical title, contents
+arranged for whoever is looking: the armour is in the **middle two rows** on the left and
+in the **bottom two rows** on the right, because your own offer is always the middle rows.
+The one stack the other player offered mirrors the same way, and a LOCK that has already
+been pressed shows in the top header row on one screen and the bottom header row on the
+other. One trade, two views, and no client mod drawing either one.
+
+</div>
+
+<br>
+
+<div align="center">
+
+<img src="docs/images/screenshot-complete.png" alt="[Trade] You locked your side. [Trade] Trade complete." width="92%">
+
+**Both sides locked.** The swap runs, the window closes, and chat says so — once.
+
+</div>
+
+The rest of this README uses **diagrams drawn from code** rather than captures, because a
+diagram can label slot numbers and name every part; this section is the proof that those
+diagrams are describing something real.
+
+---
+
 ## ✨ Why this one is different
 
 | | |
@@ -51,6 +99,7 @@ install **absolutely nothing**.
 
 ## 📖 Contents
 
+- [🎮 In the game](#-in-the-game)
 - [🪙 Crafting the Trade Token](#-crafting-the-trade-token)
 - [🪟 Inside the trading window](#-inside-the-trading-window)
 - [💬 Commands](#-commands)
@@ -92,6 +141,15 @@ registered anywhere; the craft is resolved entirely by a data pack file inside t
 The mod recognises a token by checking the held stack is a **Ghast Tear** *and* it
 carries the name `Trade Token` *and* the `max_stack_size` of 16. A plain tear fails, and
 so does an anvil-renamed one — the components are the identity.
+
+And here is that same recipe in a real crafting table, result hovered, exactly as a
+vanilla client draws it — red name, gray italic lore, no resource pack involved:
+
+<div align="center">
+
+<img src="docs/images/screenshot-recipe.png" alt="Ghast tear plus gold ingot in a crafting table, with the Trade Token tooltip showing a red name and gray lore" width="85%">
+
+</div>
 
 A [data component encoding note](#-data-component-encoding-a-footgun) at the bottom
 explains the one piece of this that surprised us, in case you fork it.
@@ -339,7 +397,8 @@ org.gradle.java.installations.paths=C:/Program Files/Eclipse Adoptium/jdk-25.0.4
 ./gradlew :shared:test              # the pure-Java core's unit tests
 
 python tools/verify_packaging.py    # assert the things a compiler cannot see
-python tools/make_assets.py         # redraw the images in docs/images/
+python tools/make_assets.py         # redraw the diagrams in docs/images/
+python tools/make_screenshots.py <dir>   # re-crop the captures (needs the originals)
 ```
 
 No IDE or decompiler needed: the dependencies and the mappings are all declared in
@@ -379,9 +438,11 @@ all (`shared/`), so it is easy to reason about and easy to test.
   go. [The roadmap](#-roadmap) is where a real GUI lives.
 - **The value table is small**, so `maxTradeValue` only counts items it knows about.
 - **Cross-dimension trading is off by default** and must be enabled explicitly.
-- **The images in this README are drawn from code** (`tools/make_assets.py`) rather than
-  captured from the game, so they show the documented layout exactly — including the
-  slot numbers — but they are not photographs of a running client.
+- **Two kinds of picture.** The captures in [🎮 In the game](#-in-the-game) are real
+  screenshots from a live 1.21.11 server with two vanilla clients; the diagrams
+  everywhere else are **drawn from code** (`tools/make_assets.py`) so they can label slot
+  numbers and every part of the window. Neither kind has been through a second client on
+  a second Minecraft version — see `TESTING.md` for what has actually been exercised.
 
 ---
 
@@ -410,7 +471,8 @@ tradewindow/
 │   ├── port_eras.py          generate every era from the 1.21.11 reference
 │   ├── generate_modules.py   regenerate the modules + settings.gradle from the matrix
 │   ├── verify_packaging.py   assert the silent-failure invariants (1437 checks)
-│   └── make_assets.py        draw docs/images/
+│   ├── make_assets.py        draw the diagrams in docs/images/
+│   └── make_screenshots.py   crop the real captures into docs/images/
 └── README.md  CHANGELOG.md  TESTING.md  DESIGN_DECISIONS.md  PORTING_NOTES.md
 ```
 

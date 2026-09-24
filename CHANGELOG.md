@@ -50,6 +50,18 @@ literal - and by loading the object form, which 1.21.1 rejects outright.
 - `mod_version` is **1.4.3**; the packaging gate now reads that version from
   `gradle.properties` instead of duplicating it.
 
+### Documentation
+
+- **The README now shows the mod as it actually runs.** Real captures from a live 1.21.11
+  server with two vanilla clients - the token being crafted, the request arriving in
+  chat, the same trade from both players' screens, and the finished swap - sit alongside
+  the drawn diagrams, and the banner puts the real window beside the title. The captures
+  are cropped by `tools/make_screenshots.py`, which keeps only the part of each frame
+  that documents the mod, so the raw screenshots stay out of the repository.
+- `TESTING.md` 0.0 records the first end-to-end trade on two real clients, and exactly
+  how far that evidence reaches: **1.21.11 only**, and no cancel, timeout or disconnect
+  path yet.
+
 ## [1.4.2] - 2026-09-24
 
 **The mod did not work at all when the server was your own computer.** Booting a real

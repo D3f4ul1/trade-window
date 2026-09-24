@@ -1,10 +1,16 @@
-"""Generates the README's images into ``docs/images/``.
+"""Generates the README's diagrams into ``docs/images/``.
 
 Everything here is drawn from code rather than captured from a running game, so the
 output is a *rendering of the documented layout*, not a screenshot. The items and the
 container are drawn with Minecraft's own GUI palette (the classic #C6C6C6 window with
 #8B8B8B slots) so a reader recognises them at a glance, and every claim the pictures
 make is one the rest of the documentation makes in words.
+
+The one exception is the banner: if the real captures produced by
+``tools/make_screenshots.py`` are present, the thumbnail puts the actual trading window
+from a running client beside the title, because a picture of the real thing sells this
+better than a drawing of it. Diagonals of the docstring aside, the banner states nothing
+the screenshots do not show.
 
 Usage:
     python tools/make_assets.py
@@ -213,6 +219,14 @@ def callout(draw, x, y, w, h, title, lines, accent=BLUE, title_f=None, body_f=No
     return h
 
 
+def screenshot(name):
+    """Loads a capture produced by tools/make_screenshots.py, if it is present."""
+    path = os.path.join(OUT, name)
+    if not os.path.exists(path):
+        return None
+    return Image.open(path).convert("RGB")
+
+
 def save(img, name):
     os.makedirs(OUT, exist_ok=True)
     path = os.path.join(OUT, name)
@@ -230,27 +244,49 @@ def banner():
     d.rectangle([0, 0, w, 8], fill=GREEN)
     d.rectangle([0, h - 8, w, h], fill=RED)
 
-    # decorative items, top right
-    bx, by, s = w - 330, 46, 54
-    head(d, bx, by, s)
-    head(d, bx + s + 10, by, s, skin=(196, 158, 120), hair=(120, 84, 44))
-    pane(d, bx + (s + 10) * 2, by, s)
-    concrete(d, bx + (s + 10) * 3, by, s, GREEN, GREEN_D)
+    # The real window, if the captures are available, takes the right third; the
+    # text column is measured from whatever is left.
+    shot = screenshot("screenshot-window.png")
+    if shot is not None:
+        margin = 22
+        scale = (h - margin * 2) / shot.height
+        shot = shot.resize((round(shot.width * scale), round(shot.height * scale)),
+                           Image.NEAREST)
+        sx = w - margin - shot.width
+        sy = (h - shot.height) // 2
+        d.rectangle([sx - 6, sy - 6, sx + shot.width + 5, sy + shot.height + 5],
+                    fill=(8, 9, 12), outline=LINE, width=2)
+        img.paste(shot, (sx, sy))
+        text_w = sx - 34
+    else:
+        # Without a capture, the decorative items stand in.
+        bx, by, s = w - 330, 46, 54
+        head(d, bx, by, s)
+        head(d, bx + s + 10, by, s, skin=(196, 158, 120), hair=(120, 84, 44))
+        pane(d, bx + (s + 10) * 2, by, s)
+        concrete(d, bx + (s + 10) * 3, by, s, GREEN, GREEN_D)
+        text_w = w
 
-    centre(d, (w / 2, 132), "TRADE WINDOW", font("head", 88), WHITE)
-    centre(d, (w / 2, 200), "Server-side player trading for Minecraft",
+    centre(d, (text_w / 2, 132), "TRADE WINDOW", font("head", 88), WHITE)
+    centre(d, (text_w / 2, 200), "Server-side player trading for Minecraft",
            font("body", 26), MUTED)
-    centre(d, (w / 2, 236), "1.21.1  →  26.3", font("bold", 30), GOLD)
+    centre(d, (text_w / 2, 236), "1.21.1  →  26.3", font("bold", 30), GOLD)
 
     labels = [("No client mod needed", GREEN), ("Registers nothing", BLUE),
               ("Vanilla double chest", GOLD), ("One datapack recipe", PURPLE)]
-    widths = [d.textlength(t, font=font("bold", 15)) + 28 for t, _ in labels]
-    x = (w - (sum(widths) + 12 * (len(labels) - 1))) / 2
-    for (text, colour), cw in zip(labels, widths):
-        chip(d, x, 300, text, colour)
-        x += cw + 12
+    f_chip = font("bold", 15)
+    widths = [d.textlength(t, font=f_chip) + 28 for t, _ in labels]
+    rows = [labels[:2], labels[2:]] if text_w < 900 else [labels]
+    y = 296
+    for row in rows:
+        widths = [d.textlength(t, font=f_chip) + 28 for t, _ in row]
+        x = (text_w - (sum(widths) + 12 * (len(row) - 1))) / 2
+        for (text, colour), cw in zip(row, widths):
+            chip(d, x, y, text, colour, f=f_chip)
+            x += cw + 12
+        y += 44
 
-    centre(d, (w / 2, 396), "point of sale: 14 targets · one design · nothing registered",
+    centre(d, (text_w / 2, 400), "14 targets · one design · nothing registered",
            font("mono", 15), DIM)
     return save(img, "banner.png")
 
