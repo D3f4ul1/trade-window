@@ -1,0 +1,6 @@
+plugins {
+	// Minecraft 26.2 is unobfuscated: plain Loom plugin, NO mappings line, implementation.
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
+}
+
+apply from: rootProject.file('gradle/target-module.gradle')

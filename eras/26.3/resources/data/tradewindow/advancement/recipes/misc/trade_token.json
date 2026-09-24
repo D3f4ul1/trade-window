@@ -1,0 +1,32 @@
+{
+	"parent": "minecraft:recipes/root",
+	"criteria": {
+		"has_the_recipe": {
+			"trigger": "minecraft:recipe_unlocked",
+			"conditions": {
+				"recipes": "tradewindow:trade_token"
+			}
+		},
+		"has_ghast_tear": {
+			"trigger": "minecraft:inventory_changed",
+			"conditions": {
+				"items": [
+					{
+						"items": "minecraft:ghast_tear"
+					}
+				]
+			}
+		}
+	},
+	"requirements": [
+		[
+			"has_the_recipe",
+			"has_ghast_tear"
+		]
+	],
+	"rewards": {
+		"recipes": [
+			"tradewindow:trade_token"
+		]
+	}
+}

@@ -1,0 +1,41 @@
+plugins {
+	id 'java-library'
+}
+
+// The shared module has no Minecraft on its classpath at all — that is the point.
+// Its sources are additionally compiled into both version jars (see
+// versions/*/build.gradle), so nothing here needs shading or packaging.
+//
+// We compile with whatever JDK drives Gradle but emit Java 17 bytecode, because
+// 1.20.1 is a Java 17 target. 26.3 re-compiles these same files at release 25.
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 17
+	it.options.encoding = 'UTF-8'
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// Gson is supplied by Minecraft at runtime; it is only a compile/test
+	// dependency here so the pure-logic classes can be unit tested standalone.
+	compileOnly 'com.google.code.gson:gson:2.10.1'
+	testImplementation 'com.google.code.gson:gson:2.10.1'
+
+	testImplementation platform('org.junit:junit-bom:5.10.2')
+	testImplementation 'org.junit.jupiter:junit-jupiter'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+java {
+	withSourcesJar()
+}
+
+test {
+	useJUnitPlatform()
+	testLogging {
+		events 'passed', 'skipped', 'failed'
+		showStandardStreams = false
+	}
+}

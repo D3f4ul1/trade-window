@@ -1,0 +1,27 @@
+{
+	"schemaVersion": 1,
+	"id": "tradewindow",
+	"version": "${version}",
+	"name": "Trade Window",
+	"description": "Secure, server-authoritative player-to-player trading. Two players open a shared window, both lock their side, and the items swap atomically — no scamming, no dropped items, no desync. Vanilla clients only: the mod adds no items, blocks, entities or packets.",
+	"authors": [
+		"Trade Window contributors"
+	],
+	"contact": {
+		"sources": "https://github.com/tradewindow/tradewindow"
+	},
+	"license": "MIT",
+	"icon": "assets/tradewindow/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.tradewindow.TradeWindow"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"fabric-api": "*",
+		"minecraft": "${minecraft_version}",
+		"java": ">=21"
+	}
+}

@@ -1,0 +1,28 @@
+{
+	"type": "minecraft:crafting_shapeless",
+	"category": "misc",
+	"group": "trade_token",
+	"ingredients": [
+		"minecraft:ghast_tear",
+		"minecraft:gold_ingot"
+	],
+	"result": {
+		"count": 1,
+		"id": "minecraft:ghast_tear",
+		"components": {
+			"minecraft:custom_name": {
+				"text": "Trade Token",
+				"color": "red",
+				"italic": false
+			},
+			"minecraft:lore": [
+				{
+					"text": "Right-click a player to trade",
+					"color": "gray",
+					"italic": true
+				}
+			],
+			"minecraft:max_stack_size": 16
+		}
+	}
+}

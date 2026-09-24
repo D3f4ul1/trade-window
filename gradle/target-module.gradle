@@ -1,0 +1,113 @@
+// ---------------------------------------------------------------------------
+// Shared configuration applied by every version module.
+//
+// A version module's own build.gradle only declares which Loom plugin it needs
+// (that differs between the obfuscated and unobfuscated eras and cannot be
+// deferred) and then applies this script. Everything else — source directories,
+// Minecraft and Fabric API coordinates, Java level, artifact name — comes from
+// the module's entry in gradle/versions.gradle.
+// ---------------------------------------------------------------------------
+
+def target = rootProject.ext.tradewindowTargets[project.name]
+if (target == null) {
+	throw new GradleException(
+			"No entry for project '${project.name}' in gradle/versions.gradle. " +
+					"Add one, or fix the project name in settings.gradle.")
+}
+
+def era = target.era
+def javaRelease = target.java as int
+
+// ---------------------------------------------------------------------------
+// Sources
+//
+// Two extra source roots, both shared:
+//   shared/src/main/java   the Minecraft-free core, identical for every target
+//   eras/<era>/java        the Minecraft-facing code for this API surface
+//
+// The core is compiled *into* each jar rather than depended on, so there is no
+// shading and no nested jar. Each era tree is compiled by every target in its
+// group, which is why a fix in one place fixes all of them.
+// ---------------------------------------------------------------------------
+sourceSets {
+	main {
+		java {
+			srcDir rootProject.file('shared/src/main/java')
+			srcDir rootProject.file("eras/${era}/java")
+		}
+		resources {
+			srcDir rootProject.file("eras/${era}/resources")
+		}
+	}
+}
+
+loom {
+	mods {
+		'tradewindow' {
+			sourceSet sourceSets.main
+		}
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Dependencies
+//
+// The one place the obfuscation break shows up in the build: obfuscated targets
+// need mappings and `modImplementation` (artifacts must be remapped); the
+// unobfuscated ones need neither a mappings line nor remapping.
+// ---------------------------------------------------------------------------
+dependencies {
+	minecraft "com.mojang:minecraft:${target.mc}"
+
+	if (target.remap) {
+		mappings loom.officialMojangMappings()
+		modImplementation "net.fabricmc:fabric-loader:${target.loader}"
+		modImplementation "net.fabricmc.fabric-api:fabric-api:${target.api}"
+	} else {
+		// No `mappings` line at all: Minecraft 26.1+ ships unobfuscated, so there
+		// is nothing to map and nothing to remap.
+		implementation "net.fabricmc:fabric-loader:${target.loader}"
+		implementation "net.fabricmc.fabric-api:fabric-api:${target.api}"
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Java
+// ---------------------------------------------------------------------------
+// Only the Java 25 targets genuinely need a JDK of that exact version —
+// `--release 25` cannot be produced by an older compiler. Everything below 25 is
+// compiled with `options.release`, which works from any newer JDK, so no
+// toolchain pin is required and the build does not demand a JDK 17/21 install
+// that may not exist on the machine.
+if (javaRelease >= 25) {
+	java {
+		toolchain {
+			languageVersion = JavaLanguageVersion.of(javaRelease)
+		}
+	}
+}
+
+java {
+	withSourcesJar()
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = javaRelease
+	it.options.encoding = 'UTF-8'
+}
+
+// ---------------------------------------------------------------------------
+// Artifact naming: tradewindow-1.0.0-<minecraft version>.jar
+// ---------------------------------------------------------------------------
+version = "${project.mod_version}-${target.mc}"
+base {
+	archivesName = 'tradewindow'
+}
+
+processResources {
+	inputs.property 'version', project.mod_version
+	inputs.property 'minecraftVersion', target.mc
+	filesMatching('fabric.mod.json') {
+		expand 'version': project.mod_version, 'minecraft_version': target.mc
+	}
+}

@@ -1,0 +1,85 @@
+// Root build script.
+//
+// The real configuration lives in two places:
+//   gradle/versions.gradle       the version matrix (single source of truth)
+//   gradle/target-module.gradle  everything each version module needs
+//
+// A version module's own build.gradle only names its Loom plugin and applies the
+// shared script, because the plugin id differs between the obfuscated and
+// unobfuscated eras and cannot be deferred.
+//
+//   ./gradlew buildAll                  build every target
+//   ./gradlew buildAll -Ponly=1.21.6    build the targets for one era
+//   ./gradlew :v1_21_1:build            build one target
+//
+// Layout:
+//   shared/            pure-Java core + JUnit tests (no Minecraft on the classpath)
+//   eras/<era>/java    the Minecraft-facing code for one API surface
+//   versions/<mc>/     one thin module per target
+
+allprojects {
+	group = project.mod_group
+	version = project.mod_version
+}
+
+// The version matrix. Applied here so `rootProject.ext.tradewindowTargets` is
+// populated before any subproject is evaluated — gradle/target-module.gradle
+// reads it during each version module's configuration.
+apply from: rootProject.file('gradle/versions.gradle')
+
+// ---------------------------------------------------------------------------
+// buildAll — build every version target, plus the core's unit tests.
+//
+// `gradle build` at the root would do the same thing, but naming the task makes
+// the intent explicit and gives a place to hang the `-Ponly=` filter.
+// ---------------------------------------------------------------------------
+tasks.register('buildAll') {
+	group = 'build'
+	description = 'Builds every Minecraft target and runs the shared core tests.'
+
+	def only = providers.gradleProperty('only').orNull
+
+	dependsOn subprojects.findAll { it.name != 'shared' }.collect { sub ->
+		if (only == null || sub.projectDir.name == only) {
+			"${sub.path}:build"
+		} else {
+			null
+		}
+	}.findAll { it != null }
+	dependsOn ':shared:test'
+
+	doLast {
+		if (only == null) {
+			logger.lifecycle("Built all {} targets.", subprojects.size() - 1)
+		} else {
+			logger.lifecycle("Built targets for Minecraft {}.", only)
+		}
+	}
+}
+
+// ---------------------------------------------------------------------------
+// listTargets — print the matrix, so the build's coverage is self-documenting.
+// ---------------------------------------------------------------------------
+tasks.register('listTargets') {
+	group = 'help'
+	description = 'Prints every Minecraft target and the source tree it compiles.'
+	doLast {
+		def targets = rootProject.ext.tradewindowTargets
+		// SLF4J's logger.lifecycle only understands bare '{}' placeholders, so the
+		// padding is done with String.format ('%-10s') instead of '{:<10}'.
+		def fmt = '%-10s %-9s %-8s %-6s %-14s %s'
+		logger.lifecycle('')
+		logger.lifecycle(String.format(Locale.ROOT, fmt,
+				'PROJECT', 'MINECRAFT', 'ERA', 'JAVA', 'ERA TYPE', 'FABRIC API'))
+		logger.lifecycle('-' * 88)
+		targets.each { name, t ->
+			logger.lifecycle(String.format(Locale.ROOT, fmt,
+					name, t.mc, t.era, t.java,
+					t.remap ? 'obfuscated' : 'UNOBFUSCATED', t.api))
+		}
+		logger.lifecycle('')
+		logger.lifecycle(String.format(Locale.ROOT, '%d targets across %d source trees.',
+				targets.size(), targets.values().collect { it.era }.unique().size()))
+		logger.lifecycle('')
+	}
+}

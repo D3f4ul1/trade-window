@@ -1,0 +1,53 @@
+# ---------------------------------------------------------------------------
+# Build output
+# ---------------------------------------------------------------------------
+# Matches build/ at any depth: ./build, shared/build, versions/*/build.
+.gradle/
+build/
+# The wrapper jar is part of the source and MUST be committed, so keep it even
+# if a broader "*.jar" rule is added later.
+!gradle/wrapper/gradle-wrapper.jar
+
+# ---------------------------------------------------------------------------
+# Fabric / Loom
+# ---------------------------------------------------------------------------
+run/
+.loom-cache/
+remappedSrc/
+
+# ---------------------------------------------------------------------------
+# Python tooling (tools/)
+# ---------------------------------------------------------------------------
+__pycache__/
+*.pyc
+
+# ---------------------------------------------------------------------------
+# IDE
+# ---------------------------------------------------------------------------
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.classpath
+.project
+.settings/
+bin/
+out/
+
+# ---------------------------------------------------------------------------
+# OS
+# ---------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------------------------------------------------------------------------
+# Mod runtime output
+# Written into the game/server directory, not the project, but listed so a stray
+# copy from a local test run never gets committed.
+# ---------------------------------------------------------------------------
+tradewindow.log
+tradewindow-history.jsonl
+tradewindow-history.db
+tradewindow-pending-returns.*
