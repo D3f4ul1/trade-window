@@ -44,8 +44,11 @@ CROPS = {
     # The same trade seen by the *other* player: the window is identical, but now
     # the top rows are theirs and the pressed LOCK is on the other side.
     "screenshot-mirrored.png": ("2026-09-24_02.23.42.png", SLOT_WITH_PANEL, 1.0),
-    # Both sides locked: the window has closed and the swap has happened.
-    "screenshot-complete.png": ("2026-09-24_02.24.02.png", (2, 604, 704, 694), 1.5),
+    # Both sides locked: the window has closed and the swap has happened. Cropped to
+    # the two [Trade] lines alone - the lines are 19px apart, starting at y=636 - so
+    # neither the screenshot toast above them nor the unrelated advancement below
+    # gets into the picture.
+    "screenshot-complete.png": ("2026-09-24_02.24.02.png", (2, 634, 704, 672), 2.0),
 }
 
 
