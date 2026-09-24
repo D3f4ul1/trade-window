@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
-"""Crops the real in-game screenshots used in the README into `docs/images/`.
+"""Crops the real in-game screenshots used by the README into ``docs/images/``.
 
-The raw captures are ordinary Minecraft screenshots taken by hand during testing;
-they live outside the repository (they are 1366x768 frames of a private session, and
-most of each frame is unrelated world). This tool keeps only the part of each frame
-that documents the mod, so the gallery can be regenerated from the originals at any
-time without committing several megabytes of raw PNG.
+The raw captures are ordinary 1366x768 Minecraft screenshots taken by hand during
+testing. They live outside the repository - most of each frame is unrelated world -
+so this tool keeps only the part of each frame that documents the mod, which also
+means the gallery can be rebuilt from the originals at any time.
 
 Usage:
 
     python tools/make_screenshots.py <folder-with-raw-screenshots>
 
-The folder must contain the source files named below. Every crop is expressed as a
-pixel box in the 1366x768 original, measured from the running client rather than
-guessed: the container panel sits at x=510..853, its slots begin at x=519 and are
-36px apart (GUI scale 2), and the chat occupies the bottom-left corner.
+Every crop is a pixel box measured from the running client rather than guessed: at
+GUI scale 2 the double-chest panel sits at x=512..851, its first slot is 32px wide
+starting at x=522, the slot pitch is 36px, and the slot rows begin at y=200. Crop
+boxes are upscaled with NEAREST because the captures are pixel art - any smoother
+resampling blurs the item icons and the font.
 """
 
 from __future__ import annotations
@@ -27,28 +27,27 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "docs" / "images"
 
-# The container panel and its first slot, measured from the captures.
-PANEL = (510, 166, 853, 599)  # x0, y0, x1, y1 of the double-chest background
-SLOT_WITH_PANEL = (495, 158, 875, 607)  # that panel plus a small margin
+# The 9x6 container alone: the title bar plus six slot rows, with a small margin.
+# It stops at the last slot row, so the player's own "Inventory" label - which sits
+# directly underneath and belongs to the game, not to this mod - stays out of frame.
+CONTAINER = (504, 158, 860, 416)
 
-# name -> (source screenshot, crop box, optional upscale)
+# name -> (source screenshot, crop box, scale). A box of None uses the whole file.
 CROPS = {
-    # Crafting the token: the recipe grid with the result hovered, so the red
-    # "Trade Token" name and the gray lore line are both on screen.
-    "screenshot-recipe.png": ("2026-09-24_02.11.26.png", (498, 208, 1132, 562), 1.4),
-    # The request arriving: the two chat lines that matter, with the buttons.
-    "screenshot-request.png": ("2026-09-24_02.18.38.png", (2, 634, 474, 671), 2.0),
-    # A live trade, seen by the player whose offer is the armour: own rows on top,
-    # the partner's below, and the partner's LOCK already pressed.
-    "screenshot-window.png": ("2026-09-24_02.23.54.png", SLOT_WITH_PANEL, 1.0),
-    # The same trade seen by the *other* player: the window is identical, but now
-    # the top rows are theirs and the pressed LOCK is on the other side.
-    "screenshot-mirrored.png": ("2026-09-24_02.23.42.png", SLOT_WITH_PANEL, 1.0),
-    # Both sides locked: the window has closed and the swap has happened. Cropped to
-    # the two [Trade] lines alone - the lines are 19px apart, starting at y=636 - so
-    # neither the screenshot toast above them nor the unrelated advancement below
-    # gets into the picture.
-    "screenshot-complete.png": ("2026-09-24_02.24.02.png", (2, 634, 704, 672), 2.0),
+    # The token's recipe in a real crafting table: "Crafting", ghast tear and gold
+    # ingot in the grid, and the result hovered so the red name and gray lore show.
+    # This source is already the hand-cropped capture, so it is taken as it stands.
+    "recipe.png": ("2026-09-24_02.11.26.png", None, 2.0),
+    # A live trade, seen by the player whose offer is the armour: their own rows
+    # above, their partner's below, and the partner's LOCK already pressed.
+    "window.png": ("2026-09-24_02.23.54.png", CONTAINER, 2.0),
+    # The same trade, same instant, on the *other* player's client. Identical
+    # window, but the armour has moved to the bottom offer rows and the pressed
+    # LOCK to the top header - which is the mirroring, caught on camera twice.
+    "window-mirrored.png": ("2026-09-24_02.23.42.png", CONTAINER, 2.0),
+    # The request arriving in chat. The message wraps onto two lines, so the crop
+    # starts on the "[Trade]" line and ends before the unrelated debug line below.
+    "request.png": ("2026-09-24_02.18.38.png", (0, 632, 352, 672), 2.0),
 }
 
 
@@ -56,12 +55,13 @@ def crop(folder: Path, source: str, box, scale: float) -> Image.Image:
     path = folder / source
     if not path.exists():
         raise SystemExit(f"missing source screenshot: {path}")
-    image = Image.open(path).convert("RGB").crop(box)
+    image = Image.open(path).convert("RGB")
+    if box:
+        image = image.crop(box)
     if scale != 1.0:
-        size = (round(image.width * scale), round(image.height * scale))
-        # Nearest-neighbour: the captures are pixel art at GUI scale 2, and
-        # anything smoother would blur the item icons.
-        image = image.resize(size, Image.NEAREST)
+        image = image.resize(
+            (round(image.width * scale), round(image.height * scale)), Image.NEAREST
+        )
     return image
 
 
@@ -74,7 +74,7 @@ def main() -> int:
     for name, (source, box, scale) in CROPS.items():
         image = crop(folder, source, box, scale)
         image.save(OUT / name)
-        print(f"{name:28s} <- {source}  {image.width}x{image.height}")
+        print(f"{name:22s} <- {source}  {image.width}x{image.height}")
     return 0
 
 

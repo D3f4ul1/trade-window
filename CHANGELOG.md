@@ -52,12 +52,15 @@ literal - and by loading the object form, which 1.21.1 rejects outright.
 
 ### Documentation
 
-- **The README now shows the mod as it actually runs.** Real captures from a live 1.21.11
-  server with two vanilla clients - the token being crafted, the request arriving in
-  chat, the same trade from both players' screens, and the finished swap - sit alongside
-  the drawn diagrams, and the banner puts the real window beside the title. The captures
-  are cropped by `tools/make_screenshots.py`, which keeps only the part of each frame
-  that documents the mod, so the raw screenshots stay out of the repository.
+- **The README is short, and every picture in it is the mod actually running.** It says
+  what the mod does, how a trade goes, the player and operator commands, the
+  configuration and the server-side design - and stops there. The five captures are
+  from a live 1.21.11 server with two vanilla clients: the token's recipe, the request
+  in chat, and the same trade from both players' screens, which is what shows the
+  mirrored halves better than a drawing ever did. `tools/make_screenshots.py` holds the
+  crop boxes, so the raw 1366x768 frames stay out of the repository. The drawn diagrams
+  are gone; the banner is the only drawn picture left, and it puts the real window
+  beside the title.
 - `TESTING.md` 0.0 records the first end-to-end trade on two real clients, and exactly
   how far that evidence reaches: **1.21.11 only**, and no cancel, timeout or disconnect
   path yet.
