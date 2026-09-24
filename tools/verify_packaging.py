@@ -15,7 +15,7 @@ a compiler cannot:
 The recipe checks are the ones a build cannot make for you: a data-pack JSON that
 names the wrong folder, spells an ingredient the old way or omits the token's
 components loads as *nothing*, with no error anywhere. The per-version rules here
-were read out of the vanilla jars (see PORTING_NOTES.md).
+were read out of the vanilla jars.
 
 One of those rules is an *encoding* rather than a shape, and it shipped as a real bug
 in both directions. The token's ``custom_name`` and ``lore`` can be spelled two ways,
@@ -30,7 +30,7 @@ the other *silently*:
   token's name becomes the raw JSON, braces and all.
 
 Neither failure is visible to a compiler or a unit test: one is a data file read at
-runtime, the other renders wrong only on a client. See PORTING_NOTES.md §14.
+runtime, the other renders wrong only on a client.
 
 Usage:
     python tools/verify_packaging.py
@@ -101,7 +101,7 @@ def check_component_encoding(gate, label, wants_string, name_value, lore_value):
 
     Both spellings load somewhere and fail somewhere else, and the failure is silent
     in both directions - so this is asserted for every target *and* every era tree.
-    See the module docstring and PORTING_NOTES.md §14.
+    See the module docstring above.
     """
     wanted = "flat string" if wants_string else "component object"
     consequence = ("the recipe will not load and no token can be crafted"
@@ -360,7 +360,7 @@ def check_jar(gate, target):
             lore = components.get("minecraft:lore")
             # The encoding matters as much as the content, and each side of the
             # 1.21.1/1.21.2 line needs the opposite one. See
-            # check_component_encoding() and PORTING_NOTES.md §14.
+            # check_component_encoding() above.
             check_component_encoding(gate, name, mc in STRING_FORM_TARGETS,
                                      name_component, lore)
             decoded_name = text_component(name_component)

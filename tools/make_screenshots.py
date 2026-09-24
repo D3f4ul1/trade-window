@@ -32,6 +32,13 @@ OUT = ROOT / "docs" / "images"
 # directly underneath and belongs to the game, not to this mod - stays out of frame.
 CONTAINER = (504, 158, 860, 416)
 
+# The whole window - title bar, the six rows above, then the player's own Inventory
+# underneath - caught the moment it opened: both header rows in place, both offers
+# still empty. This is the one picture that shows the finished layout at a glance,
+# which is why it is what the banner is built around. The panel's own edges, read
+# off the frame: black outline at x=506 and x=853, y=162 and y=602.
+WHOLE_WINDOW = (505, 161, 855, 604)
+
 # name -> (source screenshot, crop box, scale). A box of None uses the whole file.
 CROPS = {
     # The token's recipe in a real crafting table: "Crafting", ghast tear and gold
@@ -48,6 +55,9 @@ CROPS = {
     # The request arriving in chat. The message wraps onto two lines, so the crop
     # starts on the "[Trade]" line and ends before the unrelated debug line below.
     "request.png": ("2026-09-24_02.18.38.png", (0, 632, 352, 672), 2.0),
+    # The banner's hero, left at native size: the banner scales it in one step so the
+    # pixel edges stay sharp.
+    "hero.png": ("2026-09-24_02.20.41.png", WHOLE_WINDOW, 1.0),
 }
 
 

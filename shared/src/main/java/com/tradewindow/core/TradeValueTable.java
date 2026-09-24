@@ -13,8 +13,8 @@ import java.util.Map;
  *
  * <p>The table is intentionally short and easy to replace. It ships with
  * commonly-traded materials; anything not listed contributes
- * {@link #UNKNOWN_VALUE}. See {@code DESIGN_DECISIONS.md} #6 for why unknown
- * items count as zero rather than as an automatic rejection.
+ * {@link #UNKNOWN_VALUE}: an unknown item counts as zero rather than as an
+ * automatic rejection, so an unlisted material never silently blocks a trade.
  */
 public final class TradeValueTable {
 

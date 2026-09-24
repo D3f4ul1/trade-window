@@ -99,8 +99,7 @@ public final class TradeConfigData {
 	 * When false, the two players must be in the same dimension.
 	 *
 	 * <p>Not present in the original specification, which only says cross-dimension
-	 * trading is "blocked (configurable)" without naming a key. See
-	 * {@code DESIGN_DECISIONS.md} #4.
+	 * trading is "blocked (configurable)" without naming a key.
 	 */
 	public boolean allowCrossDimensionTrading = false;
 

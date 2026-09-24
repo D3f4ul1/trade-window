@@ -8,7 +8,7 @@ package com.tradewindow.core;
  * always {@link #PLAYER_2}. A side is an identity, not a screen position: the
  * 1.21.11 window maps each viewer's own side into the same two rows, so both
  * players see <em>their own</em> offer in the middle of the window no matter which
- * side they occupy. See {@code DESIGN_DECISIONS.md} #23.
+ * side they occupy.
  */
 public enum TradeSide {
 	/** The player who initiated the trade request. Rendered on the left. */

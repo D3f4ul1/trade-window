@@ -8,7 +8,7 @@ players' menus mirror each other so each sees their own offer in the middle rows
 
 Every other era is this tree plus a small, fully enumerated dialect transform. The
 dialect matrix below was established by reading the real Minecraft jars for each
-version (see PORTING_NOTES.md), not by guessing:
+version, not by guessing:
 
   era       targets              click   hover   getServer  sound   id     perm   profile  slot        colours
   --------  -------------------  ------  ------  ---------  ------  -----  -----  -------  ----------  -----------
@@ -96,7 +96,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # tree is derived from, so regenerating it would make the generator its own input.
 REF = "1.21.11"
 
-# eras/1.20.1 is retired (see PORTING_NOTES.md §13): the design this port carries
+# eras/1.20.1 is retired: the design this port carries
 # needs data components, which 1.20.1 does not have, and the target is outside the
 # version list this build ships for.
 RETIRED = {"1.20.1"}

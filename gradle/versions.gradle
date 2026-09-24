@@ -29,11 +29,11 @@
 // generator and regenerate, so the same fix lands on every target.
 //
 // The boundaries below were established by reading the real Minecraft jars for
-// each version, not assumed — the evidence for each one is in PORTING_NOTES.md.
+// each version, not assumed.
 //
 // Fabric API versions are the newest published for each Minecraft version as
 // resolved from Modrinth, not the (partly stale) versions quoted in the
-// original specification. Those corrections are listed in PORTING_NOTES.md §1.
+// original specification.
 // ---------------------------------------------------------------------------
 
 ext.tradewindowTargets = [

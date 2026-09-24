@@ -16,7 +16,7 @@ import java.util.List;
  * JDBC driver — that would turn a zero-dependency mod into a dependency-carrying
  * one — so this class reports its own availability via {@link #isDriverAvailable()}
  * and the caller falls back to {@link FileTradeHistoryStore} when the driver is
- * missing. See {@code DESIGN_DECISIONS.md} #7.
+ * missing.
  *
  * <p>Every method swallows {@link SQLException}: history is diagnostic, and a
  * database problem must never abort a trade that has already moved items.
